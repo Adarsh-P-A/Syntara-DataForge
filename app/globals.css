@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
-/* In Tailwind v4, you configure your theme directly in CSS 
-  using the @theme directive. 
-*/
+
 @theme {
   --color-brand-50: #eff6ff;
   --color-brand-100: #dbeafe;
@@ -10,15 +8,12 @@
   --color-brand-600: #2563eb;
 }
 
-/* Custom Base Styles 
-  (Optional: Makes the inputs look better by default)
-*/
+
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
   }
   
-  /* Clean up default scrollbars */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
