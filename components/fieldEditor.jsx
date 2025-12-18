@@ -127,7 +127,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             {type && type !== 'object' && type !== 'array' && (
                                 <button
                                     onClick = {() => setShowRules(!showRules)}
-                                    className = "px-2 rounded border h-10 transition-colors flex-none ${showRules ? 'bg-blue-100 border-blue-400' : 'bg-gray-100 border-gray-300 hover:bg-gray-200'}"
+                                    className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer ${showRules ? 'bg-blue-100 border-blue-400' : 'bg-gray-100 border-gray-300 hover:bg-gray-200'}"
                                     title = "Add Constraints"
                                 >
                                         {showRules ? 'ok' : 'set rules'}
@@ -141,7 +141,8 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                     <div className="flex flex-none items-center gap-2">
                         <button
                             className={`${initialData ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-600'} 
-                                        w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition`}
+                                        w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition
+                                        `}
                             onClick = {handleSave}
                             >
                             {initialData ? 'Update' : 'Add'}
@@ -151,7 +152,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         {initialData && onCancel &&(
                             <button
                             onClick={onCancel}
-                            className= "bg-gray-300 text-gray-700 px-3 py-2 rounded hover:bg-gray-400"
+                            className= "bg-gray-300 text-gray-700 px-3 py-2 rounded hover:bg-gray-400 cursor-pointer"
                             >Cancel</button>
                         )}
                     </div>
@@ -204,12 +205,12 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
 
                                         <button 
                                             onClick = {()=>handleEditSubField(index)} 
-                                            className= "flex gap-4 text-blue-500 hover:text-blue-700 font-mono"
+                                            className= "flex gap-4 text-blue-500 hover:text-blue-700 font-mono cursor-pointer"
                                         >Edit</button>
 
                                         <button 
                                             onClick={() => removeSubField(index)}
-                                            className="flex gap-4 text-red-500 hover:underline hover:text-red-700 font-mono"
+                                            className="flex gap-4 text-red-500 hover:underline hover:text-red-700 font-mono cursor-pointer"
                                         >Remove</button>
 
                                     </div>

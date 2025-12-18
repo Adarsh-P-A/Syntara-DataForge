@@ -58,7 +58,7 @@ export default function Home() {
     if(editingIndex !== null && index < editingIndex) {
       setEditingIndex(editingIndex - 1); // adjust editing index if we are removing while editing
     } else if (editingIndex === index) {
-      setEditingIndex(null); // cancel editing if the edited field is removed
+      setEditingIndex(null); // cancel editing if the editing field is removed
     }
   };
 
@@ -92,9 +92,11 @@ export default function Home() {
   const showResults = !!generatedData || isGenerating;
 
   return (
-    <main className={"p-8 mx-auto tranisition-all duration-700 ease-in-out gap-8 ${showResults ? 'max-w-6xl': 'max-w-2xl'}"}>
+    <div className='min-h-screen bg-gray-100 py-12 px-4 transition-colors duration-500'>
+    <main className={`p-8 mx-auto transition-all duration-700 ease-in-out flex gap-8 ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
+     
       {/*left column*/}
-      <div className={"flex flex-col transition-all duration-500 ${showResults ? 'w-1/2' : 'w-full'}"}>
+      <div className={`flex flex-col transition-all duration-500 ${showResults ? 'w-1/2' : 'w-full'}`}>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">JSON Schema Builder</h1>
             <div className="relative group">
@@ -141,11 +143,11 @@ export default function Home() {
                   <div className="flex gap-4">
                     <button 
                       onClick={() => handleEditClick(index)}
-                      className ="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                      className ="text-blue-600 hover:text-blue-800 font-medium text-sm cursor-pointer">
                       Edit</button>
                     <button 
                         onClick={() => removeField(index)}
-                        className="text-red-500 hover:underline hover:text-red-700 text-sm">
+                        className="text-red-500 hover:underline hover:text-red-700 text-sm cursor-pointer">
                       Remove </button>
                   </div>
                 </div>
@@ -163,7 +165,7 @@ export default function Home() {
               <button
                 onClick = {handleGenerateData}
                 disabled = { isGenerating || fields.length === 0}
-                className = "bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
+                className = "bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-2 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
               >
                 {isGenerating ? (<><span>Generating</span></>):(<><span>Generate</span></>)}
               </button>
@@ -173,38 +175,49 @@ export default function Home() {
 
 
         {/*Right Column*/}
-        {showResults && (
-      <div className=" flex flex-col flex-grow gap-6">
-            <div className="bg-gray-900 text-green-400 p-6 rounded-x1 border border-gray-800 shadow-2xl flex-grow flex flex-col relative h-[calc(100vh-4rem)] sticky top">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold text-white flex items-center gap-2">Generated Output</h3>
-                {generatedData && (
-                  <button
-                    onClick={()=> navigator.clipboard.writeText(JSON.stringify(generatedData, null, 2))}
-                    className = "text-xs bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded">
-                    copy JSON</button>
-                )}
+      <div className={`transition-all duration-700 rounded ease-in-out flex flex-col ${showResults ? 'w-1/2 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
+            
+            <div className="sticky flex flex-col relative rounded-x1 overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
+              
+              {/*Nav bar */}
+              <div className="absolute flex top-0 left-0 right-0 h-14 bg-gray-900/60 backdrop-blur-md border-b border-white/5 justify-between items-center px-4 z-20">
+                <div className="flex gap-4 items-center">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="flex justify-between text-white items-center mb-4 p-4">Generated Data</div>
+                </div>
+
+                  {generatedData && (
+                      <button
+                        onClick={()=> navigator.clipboard.writeText(JSON.stringify(generatedData, null, 2))}
+                        className = "group flex items-center gap-2 px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 border-white/5 text-xs text-gray-300 transition-all active:scale-95">
+                        copy</button>
+                    )}
               </div>
-            <div className="flex-grow overflow-auto">
+                    {/*Generated content*/}
+            <div className="flex-grow overflow-y-auto p-6 pt-20 custom-scrollbar">
               { isGenerating ? ( 
-                        <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">
+                        <div className="h-full flex flex-col items-center justify-center text-green-500/50 gap-4 space-y-4">
                           <div className="animate-spin text-4xl">⚙️</div>
                           <div className="animate-pulse">Generating fake data...</div>
                         </div>
                     ) : generatedData ? (
-                        <pre className="font-mono text-sm whitespace-pre-wrap">
+                        <pre className="font-mono text-pink-400 text-sm whitespace-pre-wrap leading-relaxed font-medium">
                             {JSON.stringify(generatedData, null, 2)}
                           </pre>
                         ): (
-                            <div className="text-gray-600 italic-sm text-center mt-20">
+                            <div className="h-full flex flex-col text-gray-600 items-center italic-sm text-center justify-center mt-20">
                               Click "Generate" Button
                             </div>
                 )}
               </div>
-              </div>
+            </div>
       </div>
-      )}
     </main>
+    </div>
   );
 }
 
