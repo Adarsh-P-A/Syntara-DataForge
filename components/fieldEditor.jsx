@@ -8,7 +8,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
     const [type, setType] = useState('');
     const [subFields, setSubFields] = useState([]);
     const [editingSubFieldIndex, setEditingSubFieldIndex] = useState(null);
-    const [constraints, setConstraints] = useState({min:'', max:'', choices:''});
+    const [constraints, setConstraints] = useState({min:'', max:'', choices:'', regex:''});
     const [showRules, setShowRules] = useState(false);
 
     const basicTypes = ['string', 'integer', 'float', 'boolean',
@@ -26,6 +26,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                 setKeyName(initialData.keyName || '');
                 setType(initialData.type || '');
                 setSubFields(initialData.subFields || []);
+                setConstraints(initialData.constraints || {min:'', max:'', choices:''})
             } 
             else {
                 resetForm();
@@ -52,6 +53,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                                                         .split(',')
                                                                         .map(s => s.trim())
                                                                         .filter(s => s);
+                    if(constraints.regex) finalConstraints.regex = constraints.regex.trim();
                     const hasConstraints = Object.keys(finalConstraints).length > 0; // we check if there are any constraints to add
                     onAddField({
                         keyName, 
@@ -88,6 +90,11 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                 setEditingSubFieldIndex(null);
             }
         };
+
+        const resetEditor = () => {
+            setKeyName('');
+            setType('');
+        }
                 
     return (
         
@@ -95,7 +102,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                 {/*Main inputs*/}
                 <div className="flex flex-wrap sm:flex-nowrap gap-4 items-center w-full">
                     {/*left side*/}
-                    <div className="flex flex-grow items-center gap-4 min-w-0">
+                    <div className="flex flex-grow items-center justify-between gap-4 min-w-0">
                         
                             <div className="flex items-center gap-4 min-w-0">
                             <input
@@ -124,16 +131,17 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
 
                             {/*Constraints*/}
                             <div className="flex-none">
-                            {type && type !== 'object' && type !== 'array' && (
+                            {type && type !== 'object' && (
                                 <button
                                     onClick = {() => setShowRules(!showRules)}
                                     className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer ${showRules ? 'bg-blue-100 border-blue-400' : 'bg-gray-100 border-gray-300 hover:bg-gray-200'}"
                                     title = "Add Constraints"
                                 >
-                                        {showRules ? 'ok' : 'set rules'}
+                                        {showRules ? '✔️' : type==='array' ? 'length' : 'Set Rules'}
                                 </button>
                             )}
                             </div>
+                            <div className="flex"></div>
                         
                     </div>
                 
@@ -147,7 +155,12 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             >
                             {initialData ? 'Update' : 'Add'}
                         </button>
-
+                        {(keyName || type)&& !initialData &&(
+                            <button
+                                onClick = {resetForm}
+                                className="bg-red-500 hover-red-700 w-24 text-white px-2 py-2 rounded transition cursor-pointer"
+                                >Cancel</button>
+                        )}
                         {/*Cancel button for edit mode*/}
                         {initialData && onCancel &&(
                             <button
@@ -157,31 +170,44 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         )}
                     </div>
                 </div>
-            {showRules && type !== 'object' && type !== 'array' && (
-                            <div className="bg-gray-50 border rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
+            {showRules && type !== 'object' && (
+                            <div className="bg-gray-50 border w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
                                 <div className="font-semibold text-gray-600 mb-2">Constraints for {type}</div>
-                                    {(['integer', 'float', 'age', 'price'].includes(type)) && (<div className="flex gap-2 mb-2">
+                                    {(['integer', 'float', 'age', 'price', 'array'].includes(type)) && (<div className="flex gap-2 mb-2">
                                         <input
-                                            placeholder = "Min Value"
+                                            placeholder = {type==='array' ? 'Min Items' : 'Min Value'}
                                             type = "number"
                                             className="border p-1 rounded w-1/2"
                                             value = {constraints.min}
                                             onChange = {e => setConstraints({...constraints, min: e.target.value})}
                                         />
                                         <input
-                                            placeholder = "Max Value"
+                                            placeholder = {type==='array' ? 'Max Items' : 'Max Value'}
                                             type="number"
                                             className = "border p-1 rounded w-1/2"
                                             value = {constraints.max}
                                             onChange = {e => setConstraints({...constraints, max: e.target.value})}
                                         />
                                     </div>)}
-                                        <input
-                                            placeholder = "Choices (comma separated)"
+                                        <div className="flex flex-col flex-grow gap-2 ">
+                                            <div className={`transition-all duration-300 ease-in-out overflow-hidden ${!constraints.regex ? 'max-h-20 opacity-100 scale-100':'max-h-0 opacity-100 scale-80'}`}>
+                                            <input
+                                            placeholder = "Choices (comma seperated)"
                                             className = "border p-1 rounded w-full"
-                                            value = {constraints.choices}
+                                            value = {constraints.choices ?? ''}
                                             onChange = {e => setConstraints({...constraints, choices: e.target.value})}
                                         />
+                                            </div>
+                                            <div className = {`transition-all duration-300 ease-in-out overflow-hidden ${!constraints.choices ? 'max-h-20 opacity-100 scale-100':'max-h-0 opacity-100 scale-80'}`}>
+                                            <input
+                                                placeholder = "Regex pattern"
+                                                className= "border p-1 rounded w-full"
+                                                value = {constraints.regex ?? ''}
+                                                onChange = {e => setConstraints({...constraints, regex: e.target.value})}
+                                            
+                                        />
+                                            </div>
+                                        </div>
                                 </div>
                         )}
             {/*When array or object is selected, sub-input should appear*/}
@@ -199,7 +225,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                         <span className="font-mono font-bold">{f.keyName}</span>
                                         <span className="mx-2 text-gray-400">:</span>
                                         <span className="text-xs text-gray-400">{f.type}</span>
-                                        {f.constraints && <span className= "ml-2 text-xs text-orange-500">⚙️</span>} {/*an icon to indicate constraints*/}
+                                        
                                     </div> 
                                     <div className="flex gap-4">
 

@@ -2,16 +2,17 @@ export interface SchemaField {
     keyName : string;
     type : string;
     subFields?:SchemaField[];
-    constraints?: {
+    constraints?:{
         min?: number;
         max?: number;
         choices?: string[];
+        regex?: string;
     };
 }
 
 // Raw JSON -> SchemaField[]
 export const JSONtoSchemaFields = (jsonObj: any): SchemaField[] => {
-    return Object.keys(jsonObj).map((key) => {
+    return Object.keys(jsonObj).map((key) => {  
         const value = jsonObj[key];
 
         if(Array.isArray(value)) {
@@ -56,14 +57,17 @@ export const generateSchema = (fieldList: SchemaField[]): any =>{
             schema[field.keyName] = generateSchema(field.subFields);
         }
         else if(field.type === 'array' && field.subFields) {
-            schema[field.keyName] = [generateSchema(field.subFields)];
+            schema[field.keyName] = {
+                type : 'array',
+                items: generateSchema(field.subFields),
+                ...field.constraints
+            }
         }
         else {
-            if(field.constraints && (field.constraints.min !== undefined || field.constraints.max !== undefined || field.constraints.choices !== undefined)) {
+            if(field.constraints && (['min', 'max', 'choices', 'regex']as const).some(key => field.constraints?.[key] !== undefined))
                 schema[field.keyName] = {
                     type: field.type,
                     ...field.constraints // Spread constraints if they exist
-                }
             }
             else {
                 schema[field.keyName] = field.type;

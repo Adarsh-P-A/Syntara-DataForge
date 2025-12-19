@@ -56,20 +56,20 @@ const gen_map: any = {
 function generate_object(schema: any): any
 {
     let output:any = {};
-    const properties = schema.properties || schema; // doubt
+    const properties = schema.properties || schema; 
     
     for(const key in properties) {
         const fieldDefinition = properties[key];
 
-        if (typeof fieldDefinition === 'string') {
+        if (typeof fieldDefinition === 'string') { // type is given directly
             const generator = gen_map[fieldDefinition];
             output[key] = generator ? generator ({}) : null;
         }
         else if(typeof fieldDefinition ==='object' && fieldDefinition !== null) {
 
             if(fieldDefinition.type === 'array') {
-                const min = fieldDefinition.minItems || 1;
-                const max = fieldDefinition.maxItems || 5;
+                const min = fieldDefinition.min || fieldDefinition.minItems|| 1;
+                const max = fieldDefinition.max || fieldDefinition.minItems || 5;
                 const count = faker.number.int({ min, max});
 
                 output[key] = [];
@@ -77,9 +77,9 @@ function generate_object(schema: any): any
                 for(let i=0; i<count; i++) {
                     if(typeof fieldDefinition.items === 'string') {
                         const generator = gen_map[fieldDefinition.items];
-                        output[key].push = (generator)
+                        output[key].push(generator ? generator({}) : null)  
                     }
-                    else if(typeof fieldDefinition === 'object' ) { // object inside array
+                    else if(typeof fieldDefinition.items === 'object' ) { // object inside array
                         output[key].push(generate_object(fieldDefinition.items))
                     }
                 }
@@ -94,7 +94,14 @@ function generate_object(schema: any): any
                 }
             }
             else { // primitives but when constraints are given looks like object
-                if(fieldDefinition.choices && Array.isArray(fieldDefinition.choices) && fieldDefinition.choices.length > 0) {
+                if(fieldDefinition.regex) {
+                    try {
+                        output[key] = faker.helpers.fromRegExp(fieldDefinition.regex);
+                    } catch(e) {
+                        output[key] = "Error: Invalid Regex";
+                    }
+                }
+                else if(fieldDefinition.choices && Array.isArray(fieldDefinition.choices) && fieldDefinition.choices.length > 0) {
                     output[key] = faker.helpers.arrayElement(fieldDefinition.choices);
                 }
                 else if(gen_map[fieldDefinition.type]) {

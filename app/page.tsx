@@ -86,6 +86,10 @@ export default function Home() {
     }
   };
 
+  const resetForm = () => {
+    setFields([]);
+  }
+
 {/*generateSchema is defined in schemaUtils*/}
   const schemaObject = generateSchema(fields);
 
@@ -158,10 +162,10 @@ export default function Home() {
           <div className= "mt-8">
             <h3 className= "text-sm font-bold uppercase text-gray-500 mb-2">JSON Preview</h3>
             <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-auto">
-              {JSON.stringify(schemaObject, null, 2)}
+              {JSON.stringify(fields, null, 2)}
             </pre>
           </div>
-          <div className="mt-6 pt-2 sticky bottom-0">
+          <div className="mt-6 pt-2 sticky bottom-0 gap-4 flex justify-start items-center">
               <button
                 onClick = {handleGenerateData}
                 disabled = { isGenerating || fields.length === 0}
@@ -169,33 +173,46 @@ export default function Home() {
               >
                 {isGenerating ? (<><span>Generating</span></>):(<><span>Generate</span></>)}
               </button>
+              {fields.length > 0 && (<button
+                onClick = {resetForm}
+                className="bg-red-500 hover:red-700 text-white py-2 px-2 cursor-pointer rounded-lg transition-all flex-none justify-center items-center shadow-lg"
+                >Reset
+              </button>)}
           </div>
         </div>
       </div>
 
 
         {/*Right Column*/}
-      <div className={`transition-all duration-700 rounded ease-in-out flex flex-col ${showResults ? 'w-1/2 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
+      <div className={`transition-all duration-700 ease-in-out flex flex-col ${showResults ? 'w-1/2 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
             
-            <div className="sticky flex flex-col relative rounded-x1 overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
+            <div className="sticky flex flex-col relative rounded-2xl overflow-hidden shadow border border-gray-800 bg-[#0d1117]">
               
               {/*Nav bar */}
               <div className="absolute flex top-0 left-0 right-0 h-14 bg-gray-900/60 backdrop-blur-md border-b border-white/5 justify-between items-center px-4 z-20">
                 <div className="flex gap-4 items-center">
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1.5 p-0">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
                   <div className="flex justify-between text-white items-center mb-4 p-4">Generated Data</div>
                 </div>
-
+                  <div className="flex items-center gap-4">
                   {generatedData && (
                       <button
                         onClick={()=> navigator.clipboard.writeText(JSON.stringify(generatedData, null, 2))}
-                        className = "group flex items-center gap-2 px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 border-white/5 text-xs text-gray-300 transition-all active:scale-95">
+                        className = "group flex items-center gap-2 px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 border-white/5 text-xs text-gray-300 transition-all active:scale-95 cursor-pointer">
                         copy</button>
                     )}
+                    <button
+                      onClick={() => setGeneratedData(null)}
+                      className = "flex items-center justify-center p-0 rounded bg-gray-600 border-gray-700 hover:bg-red-200 cursor-pointer"
+                      title="Close"
+                      >
+                        <span>❌</span>
+                    </button>
+                    </div>
               </div>
                     {/*Generated content*/}
             <div className="flex-grow overflow-y-auto p-6 pt-20 custom-scrollbar">
