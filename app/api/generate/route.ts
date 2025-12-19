@@ -121,9 +121,18 @@ function generate_object(schema: any): any
 
 export async function POST(request: Request) {
     try {
-        const schema = await request.json();
-        const result = generate_object(schema);
-        return NextResponse.json(result);
+        const body = await request.json();
+        const schema = body.schema || body;
+        const count = (typeof body.count === 'number') ?body.count : 1;
+        if(count===1) {
+            const result = generate_object(schema);
+            return NextResponse.json(result);
+        }
+        const results = [];
+        for(let i=0; i<count; i++) {
+            results.push(generate_object(schema));
+        }
+        return NextResponse.json(results);
     } catch (error) {
         console.error("Generator Error:", error);
         return NextResponse.json({error: "Failed to generate data"}, {status : 500});

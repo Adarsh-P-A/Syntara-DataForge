@@ -2,7 +2,7 @@
 
 
 import {useState, useEffect} from 'react';
-
+import { Settings2 } from 'lucide-react';
 export default function FieldEditor({onAddField, initialData=null, onCancel=null}) {
     const [keyName, setKeyName] = useState('');
     const [type, setType] = useState('');
@@ -90,12 +90,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                 setEditingSubFieldIndex(null);
             }
         };
-
-        const resetEditor = () => {
-            setKeyName('');
-            setType('');
-        }
-                
+     
     return (
         
         <div className="flex flex-col items-center gap-4 my-2 w-full transisiton-all">
@@ -137,7 +132,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                     className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer ${showRules ? 'bg-blue-100 border-blue-400' : 'bg-gray-100 border-gray-300 hover:bg-gray-200'}"
                                     title = "Add Constraints"
                                 >
-                                        {showRules ? '✔️' : type==='array' ? 'length' : 'Set Rules'}
+                                        {showRules ? '✔️' : <Settings2 className={`w-5 h-5 transition-transform duration-300 ${showRules ? 'rotate-180' : ''}`} />}
                                 </button>
                             )}
                             </div>
@@ -149,7 +144,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                     <div className="flex flex-none items-center gap-2">
                         <button
                             className={`${initialData ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-600'} 
-                                        w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition
+                                        w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition cursor-pointer
                                         `}
                             onClick = {handleSave}
                             >
@@ -170,6 +165,8 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         )}
                     </div>
                 </div>
+
+                {/*constraints*/}
             {showRules && type !== 'object' && (
                             <div className="bg-gray-50 border w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
                                 <div className="font-semibold text-gray-600 mb-2">Constraints for {type}</div>
@@ -177,6 +174,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                         <input
                                             placeholder = {type==='array' ? 'Min Items' : 'Min Value'}
                                             type = "number"
+                                            min = "1"
                                             className="border p-1 rounded w-1/2"
                                             value = {constraints.min}
                                             onChange = {e => setConstraints({...constraints, min: e.target.value})}
@@ -184,12 +182,13 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                         <input
                                             placeholder = {type==='array' ? 'Max Items' : 'Max Value'}
                                             type="number"
+                                            min={constraints.min}
                                             className = "border p-1 rounded w-1/2"
                                             value = {constraints.max}
                                             onChange = {e => setConstraints({...constraints, max: e.target.value})}
                                         />
                                     </div>)}
-                                        <div className="flex flex-col flex-grow gap-2 ">
+                                        {(!['array','object'].includes(type)) &&(<div className="flex flex-col flex-grow gap-2 ">
                                             <div className={`transition-all duration-300 ease-in-out overflow-hidden ${!constraints.regex ? 'max-h-20 opacity-100 scale-100':'max-h-0 opacity-100 scale-80'}`}>
                                             <input
                                             placeholder = "Choices (comma seperated)"
@@ -207,7 +206,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                             
                                         />
                                             </div>
-                                        </div>
+                                        </div>)}
                                 </div>
                         )}
             {/*When array or object is selected, sub-input should appear*/}
