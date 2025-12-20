@@ -2,7 +2,7 @@
 import {useState} from 'react';
 import FieldEditor from '../components/fieldEditor';
 import { JSONtoSchemaFields,generateSchema, SchemaField } from './utils/schemaUtils';
-import {Copy, Check, Trash2, Edit2, X, Settings2, Upload, RotateCcw} from 'lucide-react';
+import {Copy, Check, Trash2, Edit2, X, Upload, RotateCcw, Send, Loader2, CheckCheck, AlertCircle, Link} from 'lucide-react';
 
 export default function Home() {
   const [fields, setFields] = useState<SchemaField[]>([]); // State to hold the list of schema fields
@@ -11,6 +11,38 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [recordCount, setRecordCount] = useState(1);
   const [isCopied, setIsCopied] = useState(false);
+  const [targetURL, setTargetURL] = useState("");
+  const [pushStatus, setPushstatus] = useState<"idle" | "sending" | "error" | "success">("idle");
+
+
+  const handlePush = async () => {
+    if(!targetURL || !generatedData) return;
+    setPushstatus("sending");
+
+    try {
+      const res = await fetch('api/push', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            targetURL: targetURL,
+            data: generatedData
+          })
+        }
+      );
+      const result = await res.json();
+
+      if(result.success) {
+        setPushstatus("success");
+        setTimeout(() => setPushstatus("idle"), 3000)
+      } else {
+        console.error(result.error);
+        setPushstatus("error");
+        setTimeout(() => setPushstatus("idle"), 3000)
+      }
+    } catch(e) {
+      setPushstatus("error");
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -188,7 +220,7 @@ export default function Home() {
                 <button
                   onClick = {handleGenerateData}
                   disabled = { isGenerating || fields.length === 0}
-                  className = "bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-2 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
+                  className = "bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-3 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
                 >
                   {isGenerating ? (<><span>Generating</span></>):(<><span>Generate</span></>)}
                 
@@ -224,7 +256,8 @@ export default function Home() {
             <div className="sticky top-12 h-[calc(100vh-4rem)] flex flex-col relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
               
               {/*Nav bar */}
-              <div className="absolute flex top-0 left-0 right-0 h-14 bg-gray-900/60 backdrop-blur-md opacity-90 border-b border-white/5 justify-between items-center px-4 z-20 shrink-0">
+              
+              <div className="sticky flex top-0 left-0 right-0 h-14 bg-gray-800/50 backdrop-blur-md border-b border-white/5 justify-between items-center px-4 z-20 shrink-0">
                 <div className="flex gap-4 items-center">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -257,8 +290,37 @@ export default function Home() {
                     </button>
                     </div>
               </div>
+
+                    <div className="bg-gray-800/50 border-b border-gray-700 p-2 flex gap-2 items-center backdrop-blur-sm z-20">
+                    <div className="text-gray-500 text-xs font-mono font-bold">POST</div>
+                      <input
+                        type="text"
+                        placeholder='target API endpoint URL'
+                        value = {targetURL}
+                        onChange={(e)=> setTargetURL(e.target.value)}
+                        className="flex-grow bg-gray-900 border border-gray-700 rounded text-sm text-gray-300 px-3 py-1 focus:ring1 focus:ring-blue-500 outline-none font-mono placeholder:text-gray-600"
+                      ></input>
+                      <button
+                        onClick = {handlePush}
+                        disabled = {pushStatus === 'sending'}
+                        className = {`
+                          px-4 py-1.5 rounded text-xs font-bold text-white transition-all duration-500 flex items-center gap-2 cursor-pointer disabled-cursor-not-allowed
+                          ${pushStatus === 'idle' ? 'bg-blue-600 hover:bg-blue-500':''}
+                          ${pushStatus === 'sending' ? 'bg-blue-800 cursor-wait':''}
+                          ${pushStatus === 'success' ? 'bg-green-600':''}
+                          ${pushStatus ==='error' ? 'bg-red-600':''}
+                          `}
+                      >
+                        {pushStatus === 'idle' && <> <Send size={18}/> Send</>}
+                        {pushStatus === 'sending' && <><Loader2 size={14} className="animate-spin"/> Sending...</>}
+                        {pushStatus === 'success' && <><Check size={14}/> Done</>}
+                        {pushStatus === 'error' && <><span>⚠️</span> Failed</>}
+                      </button>
+                    </div>
+               
+
                     {/*Generated content*/}
-            <div className="flex-grow overflow-y-auto p-6 pt-20 custom-scrollbar">
+            <div className="flex-grow overflow-y-auto p-6 pt-8 custom-scrollbar">
               { isGenerating ? ( 
                         <div className="h-full flex flex-col items-center justify-center text-green-500/50 gap-4 space-y-4">
                           <div className="animate-spin text-4xl">⚙️</div>

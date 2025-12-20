@@ -129,7 +129,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             {type && type !== 'object' && (
                                 <button
                                     onClick = {() => setShowRules(!showRules)}
-                                    className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer ${showRules ? 'bg-blue-100 border-blue-400' : 'bg-gray-100 border-gray-300 hover:bg-gray-200'}"
+                                    className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer hover:bg-blue-200 border-blue-400 "
                                     title = "Add Constraints"
                                 >
                                         {showRules ? '✔️' : <Settings2 className={`w-5 h-5 transition-transform duration-300 ${showRules ? 'rotate-180' : ''}`} />}
@@ -145,7 +145,8 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         <button
                             className={`${initialData ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-600'} 
                                         w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition cursor-pointer
-                                        `}
+                                        disabled:bg-gray-500 disabled:cursor-not-allowed`}
+                            disabled = {!(keyName && type)}
                             onClick = {handleSave}
                             >
                             {initialData ? 'Update' : 'Add'}
