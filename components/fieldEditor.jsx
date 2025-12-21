@@ -11,15 +11,46 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
     const [constraints, setConstraints] = useState({min:'', max:'', choices:'', regex:''});
     const [showRules, setShowRules] = useState(false);
 
-    const basicTypes = ['string', 'integer', 'float', 'boolean',
-                        'name', 'email', 'phone', 'date', 
-                        'image_url', 'file_url',
-                        'uuid',
-                        'age', 'address', 'city', 'country', 'zip_code', 'price', 'currency_code',
-                        'paragraph', 'sentence',
-                        'product_name', 'color',
-                        'url', 'ip_address', 'user_name',
-                        'word', 'future_date'];
+    // utils/dataTypes.ts or inside your component
+
+        const DATA_TYPES = {
+            "Primitives": [
+                'string', 'integer', 'float', 'boolean', 'null'
+            ],
+            "Identity & Personal": [
+                'uuid', 'name', 'first_name', 'last_name', 
+                'gender', 'age', 'email', 'phone', 'job_title', 'prefix', 'suffix'
+            ],
+            "Location & Address": [
+                'address', 'city', 'country', 'country_code', 
+                'zip_code', 'street_address', 'state', 'latitude', 'longitude', 'time_zone'
+            ],
+            "Commerce & Finance": [
+                'price', 'currency', 'currency_code', 'currency_symbol',
+                'credit_card', 'iban', 'bitcoin_address', 
+                'product_name', 'product_description', 'department', 'material'
+            ],
+            "Internet & Tech": [
+                'url', 'domain', 'ip_address', 'ipv6', 
+                'user_agent', 'mac_address', 'file_extension', 'mime_type',
+                'semver'
+            ],
+            "Content & Text": [
+                'word', 'sentence', 'paragraph', 'slug', 'lorem_lines'
+            ],
+            "Date & Time": [
+                'date', 'future_date', 'past_date', 'recent_date', 'weekday', 'month'
+            ],
+            "Company": [
+                'company_name', 'catch_phrase', 'bs_buzz'
+            ],
+            "Media": [
+                'image_url', 'avatar', 'emoji'
+            ]
+        };
+
+
+ const basicTypes = Object.values(DATA_TYPES).flat();
         {/*Editing mode*/}
         useEffect(()=>{
             if(initialData) {
@@ -109,19 +140,26 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             </div>
 
                             <div className="w-32 flex-grow">
-                            <input 
-                            list= "typeOptions" 
-                            className= "border p-2 rounded w-full h-10"
-                            placeholder= "Select Type..." 
-                            value={type}
-                            onChange={e => setType(e.target.value)}
-                        />
+                            
                         {/* The Built-in List Definition */}
-                        <datalist id="typeOptions">
-                            <option value="object" />
-                            <option value="array" />
-                            {basicTypes.map(t => <option key={t} value={t} />)}
-                        </datalist>
+                        <select 
+                            className="w-full border rounded p-2"
+                            value={type} 
+                            onChange={(e) => setType(e.target.value)}
+                        >
+                            <option value="" disabled>Select Type...</option>
+                            
+                            {/* Map over the Categories */}
+                            {Object.entries(DATA_TYPES).map(([category, types]) => (
+                                <optgroup key={category} label={category}>
+                                    {types.map((t) => (
+                                        <option key={t} value={t}>
+                                            {t}
+                                        </option>
+                                    ))}
+                                </optgroup>
+                            ))}
+                        </select>
                             </div>
 
                             {/*Constraints*/}

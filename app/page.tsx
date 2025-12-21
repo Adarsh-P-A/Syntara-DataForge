@@ -13,7 +13,7 @@ export default function Home() {
   const [isCopied, setIsCopied] = useState(false);
   const [targetURL, setTargetURL] = useState("");
   const [pushStatus, setPushstatus] = useState<"idle" | "sending" | "error" | "success">("idle");
-
+  const [errorMsg, seterrorMsg] = useState("");
 
   const handlePush = async () => {
     if(!targetURL || !generatedData) return;
@@ -35,7 +35,7 @@ export default function Home() {
         setPushstatus("success");
         setTimeout(() => setPushstatus("idle"), 3000)
       } else {
-        console.error(result.error);
+        console.error(result.error?.message || "Unknown Error");
         setPushstatus("error");
         setTimeout(() => setPushstatus("idle"), 3000)
       }
@@ -140,10 +140,10 @@ export default function Home() {
 
   return (
     <div className='min-h-screen bg-gray-100 py-12 px-4 transition-colors duration-500'>
-    <main className={`p-8 mx-auto transition-all duration-700 ease-in-out flex gap-8 ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
+    <main className={`p-4 lg:p8 flex flex-col lg:flex-row gap-6 lg:gap-8 mx-auto transition-all duration-700 ease-in-out ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
      
       {/*left column*/}
-      <div className={`flex flex-col transition-all duration-500 ${showResults ? 'w-1/2' : 'w-full'}`}>
+      <div className={`flex flex-col transition-all duration-500 w-full ${showResults ? 'lg:w-1/2' : 'lg:w-full'}`}>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">JSON Schema Builder</h1>
             <div className="relative group">
@@ -251,9 +251,9 @@ export default function Home() {
 
 
         {/*Right Column*/}
-      <div className={`transition-all duration-700 rounded ease-in-out flex flex-col ${showResults ? 'w-1/2 opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-20 overflow-hidden'}`}>
+      <div className={`transition-all duration-700 rounded ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
             
-            <div className="sticky top-12 h-[calc(100vh-4rem)] flex flex-col relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
+            <div className="absolute h-[500px] lg:h-[calc(100vh-4rem)] flex flex-col relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
               
               {/*Nav bar */}
               
@@ -291,7 +291,7 @@ export default function Home() {
                     </div>
               </div>
 
-                    <div className="bg-gray-800/50 border-b border-gray-700 p-2 flex gap-2 items-center backdrop-blur-sm z-20">
+                    <div className="bg-gray-900/30 border-b top-14 border-gray-700 py-2 lg:px-3 px-5 flex gap-2 items-center backdrop-blur-md z-20">
                     <div className="text-gray-500 text-xs font-mono font-bold">POST</div>
                       <input
                         type="text"
@@ -302,6 +302,7 @@ export default function Home() {
                       ></input>
                       <button
                         onClick = {handlePush}
+                        title = {pushStatus==='error' ? errorMsg : "Send Data to API"}
                         disabled = {pushStatus === 'sending'}
                         className = {`
                           px-4 py-1.5 rounded text-xs font-bold text-white transition-all duration-500 flex items-center gap-2 cursor-pointer disabled-cursor-not-allowed
@@ -334,6 +335,8 @@ export default function Home() {
                             <div className="h-full flex flex-col text-gray-600 items-center italic-sm text-center justify-center mt-20">
                               Click "Generate" Button
                             </div>
+
+
                 )}
               </div>
             </div>
