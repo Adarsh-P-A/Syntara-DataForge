@@ -36,7 +36,6 @@ const Templates = [
     icon: <FileText className="w-6 h-6 text-green-500" />,
     schema: [
       { keyName: "title", type: "sentence" },
-      { keyName: "slug", type: "slug" },
       { keyName: "content", type: "paragraph" },
       { keyName: "published_at", type: "recent_date" },
       { keyName: "author", type: "name" }
@@ -53,7 +52,23 @@ export default function TemplateGallery({onSelect}: GalleryProps ) {
         <div className="mt-16 mb-12">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 text-center">Choose a template and start editing</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                hello
+                {Templates.map((template) =>(
+                    <button
+                        key={template.id}
+                        onClick={() => onSelect(template.schema)}
+                        className="group flex flex-col items-start p-6 hover:scale-105 cursor-pointer bg-white dark:bg-gray-800 border border-2 border-gray-400 dark:border-gray-700 rounded-xl hover:shadow-lg hover:blue-500 dark:hover:blue-500 transition-all text-left"
+                    >
+                        <div className="mb-4 p-3 bg-gray-50 dark-bg-gray-700 group-hover:scale-90 rounded-lg transition-transform">
+                            {template.icon}
+                        </div>
+                        <h4 className="font-bold text-gray-900 dark:text-white mb-2">
+                            {template.title}
+                        </h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {template.description}
+                        </p>
+                    </button>
+                ))}
             </div>
         </div>
     )

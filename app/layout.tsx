@@ -16,7 +16,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-gray dark:bg-black transition-colors duration-300`}>
+        <script // react takes time to render and produce white flash in dark mode
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var storedTheme = localStorage.getItem('theme');
+                  var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                  if (storedTheme === 'dark' || (!storedTheme && systemTheme)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })()
+            `,
+          }}
+        />
         {/*Navbar for the App */}
         <nav className="bg-white dark:bg-neutral-800/90 dark:backdrop-blur-md border-b border-neutral-200 dark:border-neutral-600 px-6 py-2 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
@@ -25,9 +43,8 @@ export default function RootLayout({
             </div>
             <span className="font-sans text-gray-700 dark:text-zinc-200 font-bold">Fake Data Generator</span>
           </div>
-          <div className="flex gap-3 items-center justify-between">
+          <div className="flex gap-3 px-4 items-center justify-between">
             <ThemeToggle/>
-          <div className="text-sm text-gray-500 pt-2">v1.0</div>
           </div>
         </nav>
 

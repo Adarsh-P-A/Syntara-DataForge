@@ -1,8 +1,11 @@
 "use client";
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import FieldEditor from '../components/fieldEditor';
 import { JSONtoSchemaFields,generateSchema, SchemaField } from './utils/schemaUtils';
 import {Copy, Check, Trash2, Edit2, X, Upload, RotateCcw, Send, Loader2, CheckCheck, AlertCircle, Link} from 'lucide-react';
+import TemplateGallery from '@/components/TemplateGallery';
+import HelperBanner from '@/components/helpBanner';
+import FieldList from '@/components/FieldList';
 
 export default function Home() {
   const [fields, setFields] = useState<SchemaField[]>([]); // State to hold the list of schema fields
@@ -14,6 +17,12 @@ export default function Home() {
   const [targetURL, setTargetURL] = useState("");
   const [pushStatus, setPushstatus] = useState<"idle" | "sending" | "error" | "success">("idle");
   const [errorMsg, seterrorMsg] = useState("");
+
+  const galleryRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTemplates = () => {
+    galleryRef.current?.scrollIntoView({behavior: 'smooth'})
+  };
 
   const handlePush = async () => {
     if(!targetURL || !generatedData) return;
@@ -140,6 +149,8 @@ export default function Home() {
 
   return (
     <div className='min-h-screen bg-gray-100 dark:bg-neutral-900 py-12 px-4 transition-colors duration-500'>
+      {fields.length === 0 && (<HelperBanner onScrollClick={scrollToTemplates}/>)}
+
     <main className={`p-4 lg:p8 flex flex-col lg:flex-row gap-6 lg:gap-8 mx-auto transition-all duration-700 ease-in-out ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
      
       {/*left column*/}
@@ -176,37 +187,12 @@ export default function Home() {
         {/*display section*/}
         <div className="bg-gray-50 p-6 rounded border dark:bg-neutral-800 dark:border-neutral-800">
           <h2 className="text-lg font-semibold mb-4">Current Schema Fields</h2>
-          {fields.length === 0 ? (<p className="text-gray-500">No fields added yet</p>)
-          : (
-            <div className="space-y-2">
-              {fields.map((field, index) =>(
-                <div key={index} className="flex justify-between items-center bg-white dark:bg-neutral-900 p-3 border dark:border-2 dark:border-neutral-700 rounded hover:shadow-md"> 
-                  <div> 
-                    <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{field.keyName}</span>
-                    <span className= "mx-2 text-gray-400">:</span>
-                    <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded text-sm">
-                      {field.type}{(field.type === 'object' || field.type === 'array') && `(${field.subFields?.length || 0} items)`}
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => handleEditClick(index)}
-                      className ="text-gray-400 p-1 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all active:scale-90 cursor-pointer"
-                      title = "Edit Field"
-                      >
-                      <Edit2 className="w-4 h-4"/>
-                      </button>
-                    <button 
-                        onClick={() => removeField(index)}
-                        className="text-gray-500 hover:text-red-700 dark:hover:text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all active-scale-90 cursor-pointer"
-                        title="Remove Field">
-                      <Trash2 className="w-4 h-4"/>
-                      </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <FieldList
+              fields={fields}
+              onEdit={handleEditClick}
+              onRemove={removeField}
+              setFields={setFields}
+          />
             {/*JSON preview*/}
           <div className= "mt-8">
             <h3 className= "text-sm font-bold uppercase text-gray-500 mb-2">JSON Preview</h3>
@@ -251,7 +237,7 @@ export default function Home() {
 
 
         {/*Right Column*/}
-      <div className={`transition-all duration-700 rounded relative ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
+      <div className={`transition-all duration-700 rounded relative ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full h-[500px] lg:h-auto opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
             
             <div className="absolute inset-0 h-full w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
               
@@ -342,6 +328,15 @@ export default function Home() {
             </div>
       </div>
     </main>
+    {fields.length === 0 && 
+        <div ref={galleryRef} className="max-w-4xl mx-auto px-8 pb-20">
+              <TemplateGallery onSelect={(schema) => {
+                  setFields(schema);
+                  window.scrollTo({top:0 , behavior:'smooth'});
+              } }/>
+    </div>
+    }
+    
     </div>
   );
 }

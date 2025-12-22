@@ -27,6 +27,8 @@ const gen_map: Record<string, (options?: any) => any> = {
     email: () => faker.internet.email(),
     phone: () => faker.phone.number(),
     job_title: () => faker.person.jobTitle(),
+    prefix: () => faker.person.prefix(),
+    suffix: () => faker.person.suffix(),
 
     // --- Location ---
     address: () => faker.location.streetAddress(),
@@ -38,6 +40,7 @@ const gen_map: Record<string, (options?: any) => any> = {
     latitude: () => faker.location.latitude(),
     longitude: () => faker.location.longitude(),
     time_zone: () => faker.location.timeZone(),
+    street_address: () => faker.location.streetAddress,
 
     // --- Commerce ---
     price: (opts) => faker.commerce.price({ min: opts?.min || 10, max: opts?.max || 1000 }),
@@ -50,6 +53,7 @@ const gen_map: Record<string, (options?: any) => any> = {
     product_name: () => faker.commerce.productName(),
     department: () => faker.commerce.department(),
     material: () => faker.commerce.productMaterial(),
+    product_description: () =>faker.commerce.productDescription(),
 
     // --- Internet ---
     url: () => faker.internet.url(),
@@ -60,22 +64,28 @@ const gen_map: Record<string, (options?: any) => any> = {
     mac_address: () => faker.internet.mac(),
     file_extension: () => faker.system.fileExt(),
     mime_type: () => faker.system.mimeType(),
+    user_name: () => faker.internet.username(),
+    semver: () => faker.system.semver(),
 
     // --- Content ---
     word: () => faker.lorem.word(),
     sentence: () => faker.lorem.sentence(),
     paragraph: () => faker.lorem.paragraph(),
     slug: () => faker.lorem.slug(),
+    lorem_lines: () => faker.lorem.lines(),
     
     // --- Date ---
     date: () => faker.date.anytime().toISOString(),
     future_date: () => faker.date.future().toISOString(),
     past_date: () => faker.date.past().toISOString(),
     recent_date: () => faker.date.recent().toISOString(),
+    weekday: () => faker.date.weekday(),
+    month: () => faker.date.month(),
     
     // --- Company ---
     company_name: () => faker.company.name(),
     catch_phrase: () => faker.company.catchPhrase(),
+    bs_buzz: () => faker.company.buzzPhrase(),
 
     // --- Media ---
     image_url: () => faker.image.url(),

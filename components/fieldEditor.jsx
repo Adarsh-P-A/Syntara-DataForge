@@ -1,8 +1,9 @@
 "use client";
 
-
 import {useState, useEffect} from 'react';
 import { Settings2 , Edit2, Trash2} from 'lucide-react';
+import FieldList from '@/components/FieldList';
+
 export default function FieldEditor({onAddField, initialData=null, onCancel=null}) {
     const [keyName, setKeyName] = useState('');
     const [type, setType] = useState('');
@@ -169,7 +170,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             {type && type !== 'object' && (
                                 <button
                                     onClick = {() => setShowRules(!showRules)}
-                                    className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer hover:bg-blue-200 border-blue-400 "
+                                    className = "px-2 rounded border h-10 transition-colors flex-none cursor-pointer hover:bg-blue-200 dark:hover:text-gray-900"
                                     title = "Add Constraints"
                                 >
                                         {showRules ? '✔️' : <Settings2 className={`w-5 h-5 transition-transform duration-300 ${showRules ? 'rotate-180' : ''}`} />}
@@ -239,13 +240,13 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                                         />
                                             </div>
                                             <div className = {`transition-all duration-300 ease-in-out overflow-hidden ${!constraints.choices ? 'max-h-20 opacity-100 scale-100':'max-h-0 opacity-100 scale-80'}`}>
-                                            <input
+                                            {type ==='string' && (<input
                                                 placeholder = "Regex pattern"
                                                 className= "border p-1 rounded w-full"
                                                 value = {constraints.regex ?? ''}
                                                 onChange = {e => setConstraints({...constraints, regex: e.target.value})}
                                             
-                                        />
+                                        />)}
                                             </div>
                                         </div>)}
                                 </div>
@@ -256,36 +257,11 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                     <p className="text-sm font-bold dark:text-blue-300 text-blue-600 mb-2">
                         {type === 'array' ? 'Define Array Items:' : 'Define Object Properties:'}
                     </p>
-                    {subFields.length > 0 && (
-                            <div className="space-y-2">
-                                          {subFields.map((f, index) =>(
-                                            <div key={index} className="flex justify-between items-center bg-white dark:bg-neutral-900 p-3 border border-2 dark:border-neutral-700 rounded hover:shadow-md"> 
-                                              <div> 
-                                                <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{f.keyName}</span>
-                                                <span className= "mx-2 text-gray-400">:</span>
-                                                <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded text-sm">
-                                                  {f.type}{(f.type === 'object' || f.type === 'array') && `(${f.subFields?.length || 0} items)`}
-                                                </span>
-                                              </div>
-                                              <div className="flex gap-2">
-                                                <button 
-                                                  onClick={() => handleEditSubField(index)}
-                                                  className ="text-gray-400 p-1 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all active:scale-90 cursor-pointer"
-                                                  title = "Edit Field"
-                                                  >
-                                                  <Edit2 className="w-4 h-4"/>
-                                                  </button>
-                                                <button 
-                                                    onClick={() => removeSubField(index)}
-                                                    className="text-gray-500 hover:text-red-700 dark:hover:text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all active-scale-90 cursor-pointer"
-                                                    title="Remove Field">
-                                                  <Trash2 className="w-4 h-4"/>
-                                                  </button>
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
-                        )}
+                    <FieldList
+                        fields={subFields}
+                        onEdit={handleEditSubField}
+                        onRemove={removeSubField}
+                    />
                     <FieldEditor 
                         onAddField={handleSubFieldSave} 
                         initialData = {editingSubFieldIndex !== null ? subFields[editingSubFieldIndex] : null}
