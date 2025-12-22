@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
-/* In Tailwind v4, you configure your theme directly in CSS 
-  using the @theme directive. 
-*/
+/* 1. FORCE DARK MODE TO USE CLASS (SELECTOR) STRATEGY */
+/* This line is the magic fix for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-50: #eff6ff;
   --color-brand-100: #dbeafe;
@@ -10,15 +11,30 @@
   --color-brand-600: #2563eb;
 }
 
-/* Custom Base Styles 
-  (Optional: Makes the inputs look better by default)
-*/
 @layer base {
+  :root {
+    color-scheme: light;
+    --background: 255 255 255;
+    --foreground: 17 24 39;
+  }
+
+  /* This matches your ThemeToggle.tsx adding the class="dark" */
+  :root.dark {
+    color-scheme: dark;
+    --background: 10 10 10;
+    --foreground: 237 237 237;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    /* bg-gray-50 is for light mode, dark:bg-black will now work because of line 4 */
+    @apply bg-gray-50 text-gray-900 antialiased dark:bg-black dark:text-gray-100;
+    
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* Clean up default scrollbars */
+  /* Scrollbar Styles */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -27,9 +43,9 @@
     @apply bg-transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-gray-300 rounded-full dark:bg-gray-700;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-gray-400 dark:bg-gray-600;
   }
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import ThemeToggle from "@/components/ThemeToggle";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,17 +15,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} bg-gray dark:bg-black transition-colors duration-300`}>
+        <script // react takes time to render and produce white flash in dark mode
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var storedTheme = localStorage.getItem('theme');
+                  var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                  if (storedTheme === 'dark' || (!storedTheme && systemTheme)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })()
+            `,
+          }}
+        />
         {/*Navbar for the App */}
-        <nav className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
+        <nav className="bg-white dark:bg-neutral-800/90 dark:backdrop-blur-md border-b border-neutral-200 dark:border-neutral-600 px-6 py-2 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
               PA
             </div>
-            <span className="font-sans text-gray-700 font-bold">Fake Data Generator</span>
+            <span className="font-sans text-gray-700 dark:text-zinc-200 font-bold">Fake Data Generator</span>
           </div>
-          <div className="text-sm text-gray-500">v1.0</div>
+          <div className="flex gap-3 px-4 items-center justify-between">
+            <ThemeToggle/>
+          </div>
         </nav>
 
         {children}

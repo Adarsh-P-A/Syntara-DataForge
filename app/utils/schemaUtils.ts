@@ -2,11 +2,17 @@ export interface SchemaField {
     keyName : string;
     type : string;
     subFields?:SchemaField[];
+    constraints?:{
+        min?: number;
+        max?: number;
+        choices?: string[];
+        regex?: string;
+    };
 }
 
 // Raw JSON -> SchemaField[]
 export const JSONtoSchemaFields = (jsonObj: any): SchemaField[] => {
-    return Object.keys(jsonObj).map((key) => {
+    return Object.keys(jsonObj).map((key) => {  
         const value = jsonObj[key];
 
         if(Array.isArray(value)) {
@@ -18,11 +24,22 @@ export const JSONtoSchemaFields = (jsonObj: any): SchemaField[] => {
             };
         }
         else if(typeof value === 'object' && value !== null) {
-            return {
-                keyName: key,
-                type: 'object',
-                subFields: JSONtoSchemaFields(value)
-            };
+            if(value.type &&(value.min !== undefined || value.max !== undefined || value.choices !== undefined)) {
+                return {
+                    keyName: key,
+                    type : value.type,
+                    constraints : {
+                        min: value.min,
+                        max: value.max,
+                        choices: value.choices
+                    }
+                };
+            }
+                return {
+                    keyName: key,
+                    type: 'object',
+                    subFields: JSONtoSchemaFields(value)
+                };
         }
         else {
             return {
@@ -40,10 +57,21 @@ export const generateSchema = (fieldList: SchemaField[]): any =>{
             schema[field.keyName] = generateSchema(field.subFields);
         }
         else if(field.type === 'array' && field.subFields) {
-            schema[field.keyName] = [generateSchema(field.subFields)];
+            schema[field.keyName] = {
+                type : 'array',
+                items: generateSchema(field.subFields),
+                ...field.constraints
+            }
         }
         else {
-            schema[field.keyName] = field.type;
+            if(field.constraints && (['min', 'max', 'choices', 'regex']as const).some(key => field.constraints?.[key] !== undefined))
+                schema[field.keyName] = {
+                    type: field.type,
+                    ...field.constraints // Spread constraints if they exist
+            }
+            else {
+                schema[field.keyName] = field.type;
+            }
         }
     });    
     return schema;
