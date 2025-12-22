@@ -2,7 +2,7 @@
 
 
 import {useState, useEffect} from 'react';
-import { Settings2 } from 'lucide-react';
+import { Settings2 , Edit2, Trash2} from 'lucide-react';
 export default function FieldEditor({onAddField, initialData=null, onCancel=null}) {
     const [keyName, setKeyName] = useState('');
     const [type, setType] = useState('');
@@ -14,6 +14,8 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
     // utils/dataTypes.ts or inside your component
 
         const DATA_TYPES = {
+            "Complex": ['object', 'array'],
+
             "Primitives": [
                 'string', 'integer', 'float', 'boolean', 'null'
             ],
@@ -50,7 +52,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
         };
 
 
- const basicTypes = Object.values(DATA_TYPES).flat();
+
         {/*Editing mode*/}
         useEffect(()=>{
             if(initialData) {
@@ -132,7 +134,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         
                             <div className="flex items-center gap-4 min-w-0">
                             <input
-                                className = "border p-2 rounded w-full h-10"
+                                className = "border p-2 rounded w-full h-10 dark:bg-neutral-900 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-zinc-200"
                                 placeholder = "Key Name"
                                 value = {keyName}
                                 onChange = {e => setKeyName(e.target.value)}
@@ -143,11 +145,11 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                             
                         {/* The Built-in List Definition */}
                         <select 
-                            className="w-full border rounded p-2"
+                            className="w-full border rounded p-2 dark:bg-neutral-900 dark:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-zinc-200"
                             value={type} 
                             onChange={(e) => setType(e.target.value)}
                         >
-                            <option value="" disabled>Select Type...</option>
+                            <option value="" disabled >Select Type...</option>
                             
                             {/* Map over the Categories */}
                             {Object.entries(DATA_TYPES).map(([category, types]) => (
@@ -181,9 +183,9 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                     {/*right side*/}
                     <div className="flex flex-none items-center gap-2">
                         <button
-                            className={`${initialData ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-600'} 
+                            className={`${initialData ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-800' : 'bg-green-500 hover:bg-green-600 dark:bg-emerald-600 dark:hover:bg-emerald-700'} 
                                         w-24 text-white px-4 py-2 rounded flex flex-none items-center justify-center transition cursor-pointer
-                                        disabled:bg-gray-500 disabled:cursor-not-allowed`}
+                                         disabled:bg-gray-500 disabled:cursor-not-allowed`}
                             disabled = {!(keyName && type)}
                             onClick = {handleSave}
                             >
@@ -192,7 +194,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         {(keyName || type)&& !initialData &&(
                             <button
                                 onClick = {resetForm}
-                                className="bg-red-500 hover-red-700 w-24 text-white px-2 py-2 rounded transition cursor-pointer"
+                                className="bg-red-500 dark:bg-rose-700 hover-red-700 w-24 text-white px-2 py-2 rounded transition cursor-pointer"
                                 >Cancel</button>
                         )}
                         {/*Cancel button for edit mode*/}
@@ -207,7 +209,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
 
                 {/*constraints*/}
             {showRules && type !== 'object' && (
-                            <div className="bg-gray-50 border w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
+                            <div className="bg-gray-50 dark:bg-neutral-700 border w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
                                 <div className="font-semibold text-gray-600 mb-2">Constraints for {type}</div>
                                     {(['integer', 'float', 'age', 'price', 'array'].includes(type)) && (<div className="flex gap-2 mb-2">
                                         <input
@@ -250,38 +252,40 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                         )}
             {/*When array or object is selected, sub-input should appear*/}
             {(type === 'object' || type === 'array') && (
-                <div className="ml-8 mt-2 border-l-4 border-blue-200 pl-4 py-2 bg-gray-50 rounded"> 
-                    <p className="text-sm font-bold text-blue-600 mb-2">
+                <div className="ml-8 mt-2 border-l-4 border-blue-200 dark:border-blue-900 pl-4 py-2 bg-gray-50 dark:bg-slate-800 rounded"> 
+                    <p className="text-sm font-bold dark:text-blue-300 text-blue-600 mb-2">
                         {type === 'array' ? 'Define Array Items:' : 'Define Object Properties:'}
                     </p>
-                    {/*sub Fields*/}
                     {subFields.length > 0 && (
-                        <div className="mb-4 space-y-2">
-                            {subFields.map((f, index) => ( 
-                                <div key={index} className={`flex justify-between items-center bg-white p-2 border rounded shadow-sm ${editingSubFieldIndex === index ? 'ring-2 ring-blue-400' : ''}`}>
-                                    <div>
-                                        <span className="font-mono font-bold">{f.keyName}</span>
-                                        <span className="mx-2 text-gray-400">:</span>
-                                        <span className="text-xs text-gray-400">{f.type}</span>
-                                        
-                                    </div> 
-                                    <div className="flex gap-4">
-
-                                        <button 
-                                            onClick = {()=>handleEditSubField(index)} 
-                                            className= "flex gap-4 text-blue-500 hover:text-blue-700 font-mono cursor-pointer"
-                                        >Edit</button>
-
-                                        <button 
-                                            onClick={() => removeSubField(index)}
-                                            className="flex gap-4 text-red-500 hover:underline hover:text-red-700 font-mono cursor-pointer"
-                                        >Remove</button>
-
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                            <div className="space-y-2">
+                                          {subFields.map((f, index) =>(
+                                            <div key={index} className="flex justify-between items-center bg-white dark:bg-neutral-900 p-3 border border-2 dark:border-neutral-700 rounded hover:shadow-md"> 
+                                              <div> 
+                                                <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{f.keyName}</span>
+                                                <span className= "mx-2 text-gray-400">:</span>
+                                                <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded text-sm">
+                                                  {f.type}{(f.type === 'object' || f.type === 'array') && `(${f.subFields?.length || 0} items)`}
+                                                </span>
+                                              </div>
+                                              <div className="flex gap-2">
+                                                <button 
+                                                  onClick={() => handleEditSubField(index)}
+                                                  className ="text-gray-400 p-1 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all active:scale-90 cursor-pointer"
+                                                  title = "Edit Field"
+                                                  >
+                                                  <Edit2 className="w-4 h-4"/>
+                                                  </button>
+                                                <button 
+                                                    onClick={() => removeSubField(index)}
+                                                    className="text-gray-500 hover:text-red-700 dark:hover:text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all active-scale-90 cursor-pointer"
+                                                    title="Remove Field">
+                                                  <Trash2 className="w-4 h-4"/>
+                                                  </button>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                        )}
                     <FieldEditor 
                         onAddField={handleSubFieldSave} 
                         initialData = {editingSubFieldIndex !== null ? subFields[editingSubFieldIndex] : null}

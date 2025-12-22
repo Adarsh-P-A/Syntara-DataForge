@@ -139,13 +139,13 @@ export default function Home() {
   const showResults = !!generatedData || isGenerating;
 
   return (
-    <div className='min-h-screen bg-gray-100 py-12 px-4 transition-colors duration-500'>
+    <div className='min-h-screen bg-gray-100 dark:bg-neutral-900 py-12 px-4 transition-colors duration-500'>
     <main className={`p-4 lg:p8 flex flex-col lg:flex-row gap-6 lg:gap-8 mx-auto transition-all duration-700 ease-in-out ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
      
       {/*left column*/}
       <div className={`flex flex-col transition-all duration-500 w-full ${showResults ? 'lg:w-1/2' : 'lg:w-full'}`}>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">JSON Schema Builder</h1>
+          <h1 className="text-2xl font-bold dark:text-zinc-200">JSON Schema Builder</h1>
             <div className="relative group">
               <input
                 type="file"
@@ -154,7 +154,7 @@ export default function Home() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 title="Upload JSON Schema File"
               />
-              <button className="bg-gray-700 group-hover:bg-blue-900 text-white px-4 py-2 rounded shadow flex items-center gap-2 transition">
+              <button className="bg-gray-700 dark:bg-gradient-to-b from-zinc-400 to-blue-900 group-hover:bg-blue-900 text-white px-4 py-2 rounded shadow flex items-center gap-2 transition">
                 <Upload size={18}/>
                 <span>Upload JSON</span>
               </button>
@@ -162,10 +162,10 @@ export default function Home() {
         </div>
 
         {/*input section*/}
-        <div className="bg-white p-6 rounded shadow-md border mb-8">
-          <h2 className="text-lg font-semibold mb-4 justify-between flex items-center">
+        <div className="bg-white dark:bg-neutral-800 p-6 rounded shadow-md border dark:border-neutral-600 mb-8">
+          <h2 className="text-lg font-semibold mb-4 justify-between flex items-cente dark:text-zinc-100">
             {editingIndex !== null ? "Edit Field" : "Add New Field"}
-            {editingIndex !== null && <span className="text-sm text-blue-600 font-normal">Editing item #{editingIndex + 1}</span>}
+            {editingIndex !== null && <span className="text-sm text-blue-600 dark:text-blue-400 font-normal">Editing item #{editingIndex + 1}</span>}
           </h2>
           <FieldEditor 
               onAddField={handleNewField}
@@ -174,31 +174,31 @@ export default function Home() {
           />
         </div>
         {/*display section*/}
-        <div className="bg-gray-50 p-6 rounded border">
+        <div className="bg-gray-50 p-6 rounded border dark:bg-neutral-800 dark:border-neutral-800">
           <h2 className="text-lg font-semibold mb-4">Current Schema Fields</h2>
           {fields.length === 0 ? (<p className="text-gray-500">No fields added yet</p>)
           : (
             <div className="space-y-2">
               {fields.map((field, index) =>(
-                <div key={index} className="flex justify-between items-center bg-white p-3 border rounded"> 
+                <div key={index} className="flex justify-between items-center bg-white dark:bg-neutral-900 p-3 border dark:border-2 dark:border-neutral-700 rounded hover:shadow-md"> 
                   <div> 
-                    <span className="font-mono font-bold text-blue-600">{field.keyName}</span>
+                    <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{field.keyName}</span>
                     <span className= "mx-2 text-gray-400">:</span>
-                    <span className="text-green-600 badge bg-gray-100 px-2 py-1 rounded text-sm">
+                    <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded text-sm">
                       {field.type}{(field.type === 'object' || field.type === 'array') && `(${field.subFields?.length || 0} items)`}
                     </span>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2">
                     <button 
                       onClick={() => handleEditClick(index)}
-                      className ="text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all active:scale-90 cursor-pointer"
+                      className ="text-gray-400 p-1 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all active:scale-90 cursor-pointer"
                       title = "Edit Field"
                       >
                       <Edit2 className="w-4 h-4"/>
                       </button>
                     <button 
                         onClick={() => removeField(index)}
-                        className="text-gray-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all active-scale-90 cursor-pointer"
+                        className="text-gray-500 hover:text-red-700 dark:hover:text-red-500 p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all active-scale-90 cursor-pointer"
                         title="Remove Field">
                       <Trash2 className="w-4 h-4"/>
                       </button>
@@ -210,7 +210,7 @@ export default function Home() {
             {/*JSON preview*/}
           <div className= "mt-8">
             <h3 className= "text-sm font-bold uppercase text-gray-500 mb-2">JSON Preview</h3>
-            <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-auto">
+            <pre className="bg-gray-900 dark:bg-[#0d1117] text-green-400 p-4 rounded overflow-auto">
               {JSON.stringify(schemaObject, null, 2)}
             </pre>
           </div>
@@ -220,7 +220,7 @@ export default function Home() {
                 <button
                   onClick = {handleGenerateData}
                   disabled = { isGenerating || fields.length === 0}
-                  className = "bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-3 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
+                  className = "bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 disabled:bg-gray-400 text-white font-bold py-2 px-3 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
                 >
                   {isGenerating ? (<><span>Generating</span></>):(<><span>Generate</span></>)}
                 
@@ -240,7 +240,7 @@ export default function Home() {
 
               {fields.length > 0 && (<button
                 onClick = {resetForm}
-                className="bg-red-500 hover:bg-red-700 text-white py-2 px-2 cursor-pointer rounded-lg transition-all flex justify-center items-center shadow-lg"
+                className="bg-red-500 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-500 text-white py-2 px-2 cursor-pointer rounded-lg transition-all flex justify-center items-center shadow-lg"
                 >
                   <RotateCcw size={18}/>
                   <span className="px-2">Reset</span>
@@ -251,9 +251,9 @@ export default function Home() {
 
 
         {/*Right Column*/}
-      <div className={`transition-all duration-700 rounded ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
+      <div className={`transition-all duration-700 rounded relative ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
             
-            <div className="absolute h-[500px] lg:h-[calc(100vh-4rem)] flex flex-col relative rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
+            <div className="absolute inset-0 h-full w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
               
               {/*Nav bar */}
               
@@ -273,7 +273,7 @@ export default function Home() {
                         title = "Copy to clipboard"
                         className = {`group flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-md border text-xs font-medium transition-all duration-200
                             ${isCopied ? 'bg-green-500/20 border-green-500/50 text-green-400'
-                              : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-white active:scale-95'
+                              : 'bg-neutral-900 5 border-white/10 text-gray-400 hover:bg-neutral-700  hover:text-white active:scale-95'
                             }
                           `}>
                             <span>{isCopied ? 'Copied':'Copy'}</span>
@@ -283,7 +283,7 @@ export default function Home() {
                     )}
                     <button
                       onClick={() => setGeneratedData(null)}
-                      className = "p-1.5 text-gray-400 hover:bg-white/10 hover:text-red-400  cursor-pointer rounded-md transition-all active:scale-90"
+                      className = "p-1.5 text-gray-400 hover:bg-white/dark:bg-neutral-900 10 hover:text-red-400  cursor-pointer rounded-md transition-all active:scale-90"
                       title="Close Output"
                       >
                         <X className="w-4 h-4"/>
