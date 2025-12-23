@@ -2,10 +2,11 @@
 import {useState, useRef} from 'react';
 import FieldEditor from '../components/fieldEditor';
 import { JSONtoSchemaFields,generateSchema, SchemaField } from './utils/schemaUtils';
-import {Copy, Check, Trash2, Edit2, X, Upload, RotateCcw, Send, Loader2, CheckCheck, AlertCircle, Link} from 'lucide-react';
+import {Copy, Check, X, Upload, RotateCcw, Send, Loader2, Download, Activity, ActivitySquare, Atom, Database} from 'lucide-react';
 import TemplateGallery from '@/components/TemplateGallery';
 import HelperBanner from '@/components/helpBanner';
 import FieldList from '@/components/FieldList';
+import { HtmlContext } from 'next/dist/server/route-modules/pages/vendored/contexts/entrypoints';
 
 export default function Home() {
   const [fields, setFields] = useState<SchemaField[]>([]); // State to hold the list of schema fields
@@ -19,9 +20,31 @@ export default function Home() {
   const [errorMsg, seterrorMsg] = useState("");
 
   const galleryRef = useRef<HTMLDivElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
 
   const scrollToTemplates = () => {
     galleryRef.current?.scrollIntoView({behavior: 'smooth'})
+  };
+
+  const  scrollToOutput = () => {
+    outputRef.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const handleDownload = () => {
+    if(!generatedData) return;
+
+    const jsonString = JSON.stringify(generatedData, null, 2);
+    const blob = new Blob([jsonString], { type : "application/json"});
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "generated_data.json";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handlePush = async () => {
@@ -51,6 +74,9 @@ export default function Home() {
     } catch(e) {
       setPushstatus("error");
     }
+    setTimeout(() => {
+        scrollToOutput(); 
+    }, 100);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +161,10 @@ export default function Home() {
     finally {
       setIsGenerating(false);
     }
+
+    setTimeout(() => {
+        scrollToOutput(); 
+    }, 100);
   };
 
   const resetForm = () => {
@@ -148,10 +178,10 @@ export default function Home() {
   const showResults = !!generatedData || isGenerating;
 
   return (
-    <div className='min-h-screen bg-gray-100 dark:bg-neutral-900 py-12 px-4 transition-colors duration-500'>
+    <div className='min-h-screen bg-gray-100 dark:bg-neutral-900 py-8 px-4 transition-colors duration-500'>
       {fields.length === 0 && (<HelperBanner onScrollClick={scrollToTemplates}/>)}
 
-    <main className={`p-4 lg:p8 flex flex-col lg:flex-row gap-6 lg:gap-8 mx-auto transition-all duration-700 ease-in-out ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
+    <main className={`lg:p-3 lg:p8 flex flex-col lg:flex-row gap-6 lg:gap-8 mx-auto transition-all duration-700 ease-in-out ${showResults ? 'max-w-8xl' : 'max-w-4xl'}`}>
      
       {/*left column*/}
       <div className={`flex flex-col transition-all duration-500 w-full ${showResults ? 'lg:w-1/2' : 'lg:w-full'}`}>
@@ -204,7 +234,7 @@ export default function Home() {
 
               <div className="gap-2 flex justify-between">
                 <button
-                  onClick = {handleGenerateData}
+                  onClick = {() => {handleGenerateData(); scrollToOutput();}}
                   disabled = { isGenerating || fields.length === 0}
                   className = "bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 disabled:bg-gray-400 text-white font-bold py-2 px-3 cursor-pointer rounded-lg transition-all flex-none justify-center items-center gap-2 shadow-lg"
                 >
@@ -212,7 +242,7 @@ export default function Home() {
                 
                 </button>
                 <div className="flex flex-row gap-0">
-                <span className="flex h-full items-center text-bold text-lg">#</span> 
+                <span className="flex h-full items-center text-bold text-lg pl-4">#</span> 
                 <input
                   type="number"
                   title = "Number of fake data needed"
@@ -237,23 +267,28 @@ export default function Home() {
 
 
         {/*Right Column*/}
-      <div className={`transition-all duration-700 rounded relative ease-in-out flex flex-col ${showResults ? 'lg:w-1/2 w-full h-[500px] lg:h-auto opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`}>
+      <div ref={outputRef} className={`transition-all duration-700 rounded relative ease-in-out flex flex-col scroll-mt-20 ${showResults ? 'lg:w-1/2 w-full h-[800px] lg:h-auto opacity-100 translate-x-0' : 'h-0 lg:h-auto lg:w-0 opacity-0 translate-y-20 lg:translate-y-0 lg:translate-x-20 overflow-hidden'}`} >
             
-            <div className="absolute inset-0 h-full w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]">
+            <div className="absolute inset-0 h-full w-full flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-gray-800 bg-[#0d1117]" >
               
               {/*Nav bar */}
               
               <div className="sticky flex top-0 left-0 right-0 h-14 bg-gray-800/50 backdrop-blur-md border-b border-white/5 justify-between items-center px-4 z-20 shrink-0">
-                <div className="flex gap-4 items-center">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="flex text-white items-center p-4 text-md font-medium">Generated Data</div>
+                <div className="flex gap-4 items-center px-2">
+                   <Database size={18} className='text-white'/>
+                  <div className="flex text-white items-center p-2 text-md font-medium" >Generated Data</div>
                 </div>
                   <div className="flex items-center gap-4">
                   {generatedData && (
+                    <>
+                      <button
+                        onClick={handleDownload}
+                        title="Download JSON"
+                        className = "group flex items-center gap-2 px-3 py-0.5 cursor-pointer rounded-md border text-xs font-medium transition-all duration-200 bg-neutral-900 5 border-white/10 text-gray-400 hover:bg-neutral-700 hover:text-white active:scale-95"
+                      >
+                        <Download className="w-3.5"/>
+                        <span>Download</span>
+                      </button>
                       <button
                         onClick={handleCopy}
                         title = "Copy to clipboard"
@@ -262,10 +297,10 @@ export default function Home() {
                               : 'bg-neutral-900 5 border-white/10 text-gray-400 hover:bg-neutral-700  hover:text-white active:scale-95'
                             }
                           `}>
-                            <span>{isCopied ? 'Copied':'Copy'}</span>
                         {isCopied ? (<Check className='w-3.5 h-3.5'/>):(<Copy className='w-3.5 h-3.5'/>)}
-                        
+                        <span>{isCopied ? 'Copied':'Copy'}</span>
                         </button>
+                      </>
                     )}
                     <button
                       onClick={() => setGeneratedData(null)}
