@@ -1,8 +1,9 @@
 "use client";
 
 import {useState, useEffect} from 'react';
-import { Settings2 , Edit2, Trash2} from 'lucide-react';
+import { Settings2 , Edit2, Trash2, Info} from 'lucide-react';
 import FieldList from '@/components/FieldList';
+import InfoTooltip from './infoButton';
 
 export default function FieldEditor({onAddField, initialData=null, onCancel=null}) {
     const [keyName, setKeyName] = useState('');
@@ -210,8 +211,11 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
 
                 {/*constraints*/}
             {showRules && type !== 'object' && (
-                            <div className="bg-gray-50 dark:bg-neutral-700 border w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
-                                <div className="font-semibold text-gray-600 mb-2">Constraints for {type}</div>
+                            <div className="bg-gray-50 dark:bg-neutral-700 border dark:border-neutral-400 w-3/4 rounded p-3 text-sm animate-in fade-in slide-in-from-top-1">
+                                <div className="flex justify-between">
+                                <div className="font-semibold text-gray-600 dark:text-blue-300 mb-2">Constraints for {type}</div>
+                                <InfoTooltip text={(type==='string')? "The Regex pattern [A-Z]{5}[0-9]{2} indicates five uppercase letters followed by two numbers.":"If choices are provided, one value will be selected from the specified list"}/>
+                                </div>
                                     {(['integer', 'float', 'age', 'price', 'array'].includes(type)) && (<div className="flex gap-2 mb-2">
                                         <input
                                             placeholder = {type==='array' ? 'Min Items' : 'Min Value'}

@@ -6,7 +6,7 @@ import {Copy, Check, X, Upload, RotateCcw, Send, Loader2, Download, Activity, Ac
 import TemplateGallery from '@/components/TemplateGallery';
 import HelperBanner from '@/components/helpBanner';
 import FieldList from '@/components/FieldList';
-import { HtmlContext } from 'next/dist/server/route-modules/pages/vendored/contexts/entrypoints';
+import InfoTooltip from '@/components/infoButton';
 
 export default function Home() {
   const [fields, setFields] = useState<SchemaField[]>([]); // State to hold the list of schema fields
@@ -67,7 +67,7 @@ export default function Home() {
         setPushstatus("success");
         setTimeout(() => setPushstatus("idle"), 3000)
       } else {
-        console.error(result.error?.message || "Unknown Error");
+        seterrorMsg(result.error?.message || "Unknown Error");
         setPushstatus("error");
         setTimeout(() => setPushstatus("idle"), 3000)
       }
@@ -251,6 +251,7 @@ export default function Home() {
                   onChange = {(e) => setRecordCount(Number(e.target.value))}
                   className = "w-[8ch] py-2 bg-green-500 opacity-80 rounded-md text-center font-mono font-bold text-white focus:ring-2 focus:ring-green-800 outline-none"
                 />
+                <InfoTooltip text="The maximum allowed count is 2000. Any value exceeding this limit will be set to 2000"/>
                 </div>
               </div>
 
@@ -364,7 +365,7 @@ export default function Home() {
       </div>
     </main>
     {fields.length === 0 && 
-        <div ref={galleryRef} className="max-w-4xl mx-auto px-8 pb-20">
+        <div ref={galleryRef} className="scroll-mt-20 max-w-4xl mx-auto px-8 pb-20">
               <TemplateGallery onSelect={(schema) => {
                   setFields(schema);
                   window.scrollTo({top:0 , behavior:'smooth'});

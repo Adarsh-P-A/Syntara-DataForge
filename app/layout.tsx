@@ -38,10 +38,14 @@ export default function RootLayout({
         {/*Navbar for the App */}
         <nav className="bg-white dark:bg-neutral-800/90 dark:backdrop-blur-md border-b border-neutral-200 dark:border-neutral-600 px-6 py-2 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-              PA
+            <div className="flex items-center select-none cursor-pointer" >
+              <span className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 tracking-tight">
+                Syn
+              </span>
+              <span className="text-2xl font-semibold text-gray-500 tracking-wide">
+                  tara
+              </span>
             </div>
-            <span className="font-sans text-gray-700 dark:text-zinc-200 font-bold">Fake Data Generator</span>
           </div>
           <div className="flex gap-3 px-4 items-center justify-between">
             <ThemeToggle/>
