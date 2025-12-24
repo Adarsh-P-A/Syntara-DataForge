@@ -31,9 +31,9 @@ export default function FieldList({fields, onEdit, onRemove, setFields}: FieldLi
               {fields.map((field, index) =>(
                 <div key={index} className="flex justify-between items-center bg-white dark:bg-neutral-900 p-3 border dark:border-2 dark:border-neutral-700 rounded hover:shadow-md"> 
                   <div> 
-                    <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{field.keyName}</span>
+                    <span className="font-mono font-bold text-sm lg:text-base text-blue-600 dark:text-blue-400">{field.keyName}</span>
                     <span className= "mx-2 text-gray-400">:</span>
-                    <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded text-sm">
+                    <span className="text-green-600 dark:text-green-300 badge bg-gray-100 dark:bg-black/30 px-2 py-1 rounded lg:text-sm text-xs">
                       {field.type}{(field.type === 'object' || field.type === 'array') && `(${field.subFields?.length || 0} items)`}
                     </span>
                   </div>

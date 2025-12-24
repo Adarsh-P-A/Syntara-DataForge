@@ -1,11 +1,11 @@
 
-import crypto from 'crypto';
 import {faker} from '@faker-js/faker';
 import { NextResponse } from 'next/server';
 
 // Always remember Internal represention is not same as JSON preview
 // Here I send clean JSON to backend and internal representation is only for UI
 
+const MAX_RECORDS = 2000;
 
 // app/api/generate/route.ts
 
@@ -163,7 +163,13 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const schema = body.schema || body;
-        const count = (typeof body.count === 'number') ?body.count : 1;
+        let count = (typeof body.count === 'number') ?body.count : 1;
+
+        if(count < 1) count = 1;
+        else if(count > MAX_RECORDS) {
+            count = MAX_RECORDS;
+        }
+
         if(count===1) {
             const result = generate_object(schema);
             return NextResponse.json(result);
