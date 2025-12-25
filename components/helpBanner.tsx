@@ -8,7 +8,7 @@ interface BannerProps {
 
 export default function HelperBanner ({onScrollClick}: BannerProps) {
     return (
-        <div className="text-center">
+        <div className="text-center py-2">
         <div
         onClick={onScrollClick}
         title="Ready-made templates"
