@@ -7,6 +7,7 @@ import TemplateGallery from '@/components/TemplateGallery';
 import HelperBanner from '@/components/helpBanner';
 import FieldList from '@/components/FieldList';
 import InfoTooltip from '@/components/infoButton';
+import ExportPanel from '@/components/ExportPanel';
 
 export default function Home() {
   const [fields, setFields] = useState<SchemaField[]>([]); // State to hold the list of schema fields
@@ -16,8 +17,8 @@ export default function Home() {
   const [recordCount, setRecordCount] = useState(1);
   const [isCopied, setIsCopied] = useState(false);
   const [targetURL, setTargetURL] = useState("");
-  const [pushStatus, setPushstatus] = useState<"idle" | "sending" | "error" | "success">("idle");
-  const [errorMsg, seterrorMsg] = useState("");
+  const [isPushing, setIsPushing] = useState(false);
+  const [exportMode, setExportMode] = useState(false);
 
   const galleryRef = useRef<HTMLDivElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -30,49 +31,34 @@ export default function Home() {
     outputRef.current?.scrollIntoView({behavior: "smooth"})
   }
 
-  const handleDownload = () => {
-    if(!generatedData) return;
-
-    const jsonString = JSON.stringify(generatedData, null, 2);
-    const blob = new Blob([jsonString], { type : "application/json"});
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = "generated_data.json";
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
+  const toggleExport = () => {
+    if(exportMode)
+        setExportMode(false);
+    else 
+        setExportMode(true);
+  }
   const handlePush = async () => {
-    if(!targetURL || !generatedData) return;
-    setPushstatus("sending");
-
+    if (!targetURL) {
+      alert("Please enter a valid API URL");
+      return;
+    }
+    setIsPushing(true);
     try {
-      const res = await fetch('api/push', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            targetURL: targetURL,
-            data: generatedData
-          })
-        }
-      );
-      const result = await res.json();
-
-      if(result.success) {
-        setPushstatus("success");
-        setTimeout(() => setPushstatus("idle"), 3000)
+      const response = await fetch(targetURL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(generatedData),
+      });
+      if(response.ok) {
+        alert("Data Pushed successfull!");
       } else {
-        seterrorMsg(result.error?.message || "Unknown Error");
-        setPushstatus("error");
-        setTimeout(() => setPushstatus("idle"), 3000)
+        alert("Failed to push data. Check console for details.");
       }
-    } catch(e) {
-      setPushstatus("error");
+    } catch(error) {
+      console.error("Push error:", error);
+      alert("Error pushing data");
+    } finally {
+      setIsPushing(false);
     }
     setTimeout(() => {
         scrollToOutput(); 
@@ -283,13 +269,13 @@ export default function Home() {
                   {generatedData && (
                     <>
                       <button
-                        onClick={handleDownload}
-                        title="Download JSON"
-                        className = "group flex items-center gap-2 px-3 py-0.5 cursor-pointer rounded-md border text-xs font-medium transition-all duration-200 bg-neutral-900 5 border-white/10 text-gray-400 hover:bg-neutral-700 hover:text-white active:scale-95"
-                      >
-                        <Download className="w-3.5"/>
-                        <span>Download</span>
-                      </button>
+                        onClick={toggleExport}
+                        title = "Export data"
+                        className = {`group flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-md border text-xs font-medium transition-all duration-200
+                            ${exportMode ? 'bg-green-500/20 border-green-500 text-green-500':'bg-neutral-900 border-white/10 text-gray-400 hover:text-white hover:bg-neutral-700'}
+                          `}>
+                        Export
+                        </button>
                       <button
                         onClick={handleCopy}
                         title = "Copy to clipboard"
@@ -313,6 +299,15 @@ export default function Home() {
                     </div>
               </div>
 
+                    {exportMode && (<ExportPanel
+                      generatedData={generatedData}
+                      targetUrl={targetURL}
+                      setTargetUrl={setTargetURL}
+                      onPush={handlePush}
+                      isPushing = {isPushing}
+                    />)}
+                    {/*
+                    
                     <div className="bg-gray-900/30 border-b top-14 border-gray-700 py-2 lg:px-3 px-5 flex gap-2 items-center backdrop-blur-md z-20">
                     <div className="text-gray-500 text-xs font-mono font-bold">POST</div>
                       <input
@@ -339,7 +334,7 @@ export default function Home() {
                         {pushStatus === 'success' && <><Check size={14}/> Done</>}
                         {pushStatus === 'error' && <><span>⚠️</span> Failed</>}
                       </button>
-                    </div>
+                    </div>*/}
                
 
                     {/*Generated content*/}
