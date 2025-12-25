@@ -306,36 +306,6 @@ export default function Home() {
                       onPush={handlePush}
                       isPushing = {isPushing}
                     />)}
-                    {/*
-                    
-                    <div className="bg-gray-900/30 border-b top-14 border-gray-700 py-2 lg:px-3 px-5 flex gap-2 items-center backdrop-blur-md z-20">
-                    <div className="text-gray-500 text-xs font-mono font-bold">POST</div>
-                      <input
-                        type="text"
-                        placeholder='target API endpoint URL'
-                        value = {targetURL}
-                        onChange={(e)=> setTargetURL(e.target.value)}
-                        className="flex-grow bg-gray-900 border border-gray-700 rounded text-sm text-gray-300 px-3 py-1 focus:ring1 focus:ring-blue-500 outline-none font-mono placeholder:text-gray-600"
-                      ></input>
-                      <button
-                        onClick = {handlePush}
-                        title = {pushStatus==='error' ? errorMsg : "Send Data to API"}
-                        disabled = {pushStatus === 'sending'}
-                        className = {`
-                          px-4 py-1.5 rounded text-xs font-bold text-white transition-all duration-500 flex items-center gap-2 cursor-pointer disabled-cursor-not-allowed
-                          ${pushStatus === 'idle' ? 'bg-blue-600 hover:bg-blue-500':''}
-                          ${pushStatus === 'sending' ? 'bg-blue-800 cursor-wait':''}
-                          ${pushStatus === 'success' ? 'bg-green-600':''}
-                          ${pushStatus ==='error' ? 'bg-red-600':''}
-                          `}
-                      >
-                        {pushStatus === 'idle' && <> <Send size={18}/> Send</>}
-                        {pushStatus === 'sending' && <><Loader2 size={14} className="animate-spin"/> Sending...</>}
-                        {pushStatus === 'success' && <><Check size={14}/> Done</>}
-                        {pushStatus === 'error' && <><span>⚠️</span> Failed</>}
-                      </button>
-                    </div>*/}
-               
 
                     {/*Generated content*/}
             <div className="flex-grow overflow-y-auto p-6 pt-8 custom-scrollbar">
@@ -352,8 +322,6 @@ export default function Home() {
                             <div className="h-full flex flex-col text-gray-600 items-center italic-sm text-center justify-center mt-20">
                               Click "Generate" Button
                             </div>
-
-
                 )}
               </div>
             </div>
