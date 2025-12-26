@@ -3,6 +3,8 @@
 
 **Syntara** is a production-ready mock data generator designed for developers who need realistic test data instantly. It combines a visual schema builder with various export options, allowing you to seed databases, test APIs or download directly in seconds.
 
+live demo: https://syntara-dataforge.vercel.app/
+
 ##  Features
 
 * **Visual Schema Builder:** Create complex nested JSON structures without writing code.
@@ -78,8 +80,6 @@ Syntara allows you to perform "Database Seeding" without connecting directly to 
 2.  Enter your localhost or staging URL (e.g., `http://localhost:8000/api/bulk-users`).
 3.  Click **Push**. The app will send a POST request with the data body.
 
-### 4. Live preview
-click here for the application hosted in vercel: http://syntara-dataforge.vercel.app/
 
 
 Screenshots:
