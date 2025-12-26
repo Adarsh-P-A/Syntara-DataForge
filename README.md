@@ -78,6 +78,10 @@ Syntara allows you to perform "Database Seeding" without connecting directly to 
 2.  Enter your localhost or staging URL (e.g., `http://localhost:8000/api/bulk-users`).
 3.  Click **Push**. The app will send a POST request with the data body.
 
+### 4. Live preview
+click here for the application hosted in vercel: http://syntara-dataforge.vercel.app/
+
+
 Screenshots:
 
 ![Syntara Dashboard Preview](assets/construction_lightmode.png)
