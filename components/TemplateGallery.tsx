@@ -1,9 +1,9 @@
 "use client";
 
 import { 
-  User, ShoppingBag, FileText, CreditCard, Building2, MapPin, 
+  User, ShoppingBag, CreditCard, Building2, MapPin, 
   Truck, MessageCircle, Music, Video, Server, Smartphone, 
-  Database, Code, Calendar, Gamepad2, HeartPulse, Shield, IdCardLanyard, TrainFront
+  Database, Code, Calendar, HeartPulse, Shield, IdCardLanyard, TrainFront
 } from "lucide-react";
 
 const Templates = [
@@ -395,19 +395,6 @@ const Templates = [
     ]
   },
   {
-    id: "gaming",
-    title: "RPG Character",
-    description: "Game stats and inventory.",
-    icon: <Gamepad2 className="w-6 h-6 text-purple-600" />,
-    schema: [
-      { keyName: "char_name", type: "first_name" },
-      { keyName: "class", type: "word" },
-      { keyName: "level", type: "integer", min: 1, max: 100 },
-      { keyName: "gold", type: "integer", min: 0, max: 99999 },
-      { keyName: "guild", type: "company_name" }
-    ]
-  },
-  {
     id: "health",
     title: "Patient Record",
     description: "Medical data placeholders.",
@@ -443,7 +430,7 @@ export default function TemplateGallery({onSelect}: GalleryProps ) {
     return (
         <div className="mt-16 mb-12">
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 text-center">Choose a template and start editing</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
                 {Templates.map((template) =>(
                     <button
                         key={template.id}
