@@ -328,7 +328,7 @@ export default function Home() {
       </div>
     </main>
     {fields.length === 0 && 
-        <div ref={galleryRef} className="scroll-mt-20 max-w-4xl mx-auto px-8 pb-20">
+        <div ref={galleryRef} className="scroll-mt-20 max-w-4xl mx-auto px-0 pb-20 ">
               <TemplateGallery onSelect={(schema) => {
                   setFields(schema);
                   window.scrollTo({top:0 , behavior:'smooth'});
