@@ -3,10 +3,219 @@
 import { 
   User, ShoppingBag, FileText, CreditCard, Building2, MapPin, 
   Truck, MessageCircle, Music, Video, Server, Smartphone, 
-  Database, Code, Calendar, Gamepad2, HeartPulse, Shield 
+  Database, Code, Calendar, Gamepad2, HeartPulse, Shield, IdCardLanyard, TrainFront
 } from "lucide-react";
 
 const Templates = [
+    // --- Real stuff ---
+    {
+      id: "NITC_id",
+      title: "NITC Student",
+      description: "Basic info about an NITC student.",
+      icon: <IdCardLanyard className="w-6 h-6 text-indigo-500" />,
+      schema: [
+          {
+            "keyName": "Name",
+            "type": "name",
+            "subFields": []
+          },
+          {
+            "keyName": "Roll No",
+            "type": "string",
+            "subFields": [],
+            "constraints": {
+              "regex": "B2[2-5](0\\d{3}|1[0-1]\\d{2})(CS|EC|EE|ME|CE|MS|EP|CH|PE)"
+            }
+          },
+          {
+            "keyName": "AADHAR No.",
+            "type": "string",
+            "subFields": [],
+            "constraints": {
+              "regex": "[2-9]\\d{11}"
+            }
+          },
+          {
+            "keyName": "Blood Group",
+            "type": "string",
+            "subFields": [],
+            "constraints": {
+              "regex": "(A|B|AB|O)[+-]"
+            }
+          }
+        ]
+    },
+    {
+      id: "train",
+      title: "IRCTC Train ticket",
+      description: "Train ticket details for Indian Railways.",
+      icon: <TrainFront className="w-6 h-6 text-indigo-500" />,
+      schema: [
+        {
+          "keyName": "Train Name",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "(Mangala Exp|Netravati Exp|Jan Shatabdi|Vande Bharat|Parasuram Exp|Maveli Exp|Kerala Sampark Kranti Exp|Rajadhani Exp)"
+          }
+        },
+        {
+          "keyName": "PNR",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "\\d{10}"
+          }
+        },
+        {
+          "keyName": "Coach",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "(S[1-9]|B[1-5]|A[1-2]|D[1-16])"
+          }
+        },
+        {
+          "keyName": "Berth",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "(Lower|Middle|Upper|Side Lower|Side Upper)"
+          }
+        },
+        {
+          "keyName": "Status",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "(CNF|RAC \\d{1,2}|WL \\d{1,3})"
+          }
+        }
+      ]
+  },
+  {
+    id: "ecommerce",
+    title: "E-commerce Product",
+    description: "Invoice of E-commerce purchase.",
+    icon: <ShoppingBag className="w-6 h-6 text-purple-500" />,
+    schema: [
+        {
+          "keyName": "Order ID",
+          "type": "string",
+          "subFields": [],
+          "constraints": {
+            "regex": "OD[1-9]\\d{15}"
+          }
+        },
+        {
+          "keyName": "Customer",
+          "type": "name",
+          "subFields": []
+        },
+        {
+          "keyName": "is_prime",
+          "type": "boolean",
+          "subFields": []
+        },
+        {
+          "keyName": "Address",
+          "type": "object",
+          "subFields": [
+            {
+              "keyName": "Street",
+              "type": "street_address",
+              "subFields": []
+            },
+            {
+              "keyName": "City",
+              "type": "city",
+              "subFields": []
+            },
+            {
+              "keyName": "Pincode",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "regex": "[1-9][0-9]{5}"
+              }
+            }
+          ]
+        },
+        {
+          "keyName": "Items",
+          "type": "array",
+          "subFields": [
+            {
+              "keyName": "Product Name",
+              "type": "product_name",
+              "subFields": []
+            },
+            {
+              "keyName": "Category",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "choices": [
+                  "Electronics",
+                  "Fashion",
+                  "Food",
+                  "Cosmetics",
+                  "Pharmaceutical"
+                ]
+              }
+            },
+            {
+              "keyName": "Price",
+              "type": "price",
+              "subFields": []
+            },
+            {
+              "keyName": "Status",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "regex": "(Delivered|Shipped|Out for Delivery|Cancelled)"
+              }
+            }
+          ]
+        },
+        {
+          "keyName": "Payment",
+          "type": "object",
+          "subFields": [
+            {
+              "keyName": "Method",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "choices": [
+                  "UPI",
+                  "Credit Card",
+                  "COD",
+                  "Net Banking"
+                ]
+              }
+            },
+            {
+              "keyName": "UPI ID",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "regex": "[a-z]{4,10}@(oksbi|okhdfc|paytm|ybl)"
+              }
+            },
+            {
+              "keyName": "Transaction ID",
+              "type": "string",
+              "subFields": [],
+              "constraints": {
+                "regex": "TXN\\d{10}"
+              }
+            }
+          ]
+        }
+      ]
+  },
     // --- SOCIAL & MEDIA ---
   {
     id: "comment",
@@ -61,33 +270,6 @@ const Templates = [
       { keyName: "is_active", type: "boolean" }
     ]
   },
-  {
-    id: "ecommerce",
-    title: "E-commerce Product",
-    description: "Product details, pricing, and inventory.",
-    icon: <ShoppingBag className="w-6 h-6 text-purple-500" />,
-    schema: [
-      { keyName: "product_id", type: "uuid" },
-      { keyName: "name", type: "product_name" },
-      { keyName: "price", type: "price", min: 10, max: 500 },
-      { keyName: "category", type: "word" },
-      { keyName: "in_stock", type: "boolean" }
-    ]
-  },
-  {
-    id: "blog-post",
-    title: "Blog Post",
-    description: "Content structure for CMS testing.",
-    icon: <FileText className="w-6 h-6 text-green-500" />,
-    schema: [
-      { keyName: "title", type: "sentence" },
-      { keyName: "slug", type: "slug" },
-      { keyName: "content", type: "paragraph" },
-      { keyName: "published_at", type: "recent_date" },
-      { keyName: "author", type: "name" }
-    ]
-  },
-
   // --- BUSINESS & FINANCE ---
   {
     id: "invoice",

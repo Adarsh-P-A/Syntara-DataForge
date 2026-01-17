@@ -213,7 +213,7 @@ export default function Home() {
           <div className= "mt-8">
             <h3 className= "text-sm font-bold uppercase text-gray-500 mb-2">JSON Preview</h3>
             <pre className="bg-gray-900 dark:bg-[#0d1117] text-green-400 p-4 rounded overflow-auto">
-              {JSON.stringify(schemaObject, null, 2)}
+              {JSON.stringify(fields, null, 2)}
             </pre>
           </div>
           <div className="mt-6 pt-2 sticky bottom-0 gap-2 flex w-full justify-between">

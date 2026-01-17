@@ -1,6 +1,7 @@
 
-import {faker} from '@faker-js/faker';
+import {fakerEN_IN as faker} from '@faker-js/faker';
 import { NextResponse } from 'next/server';
+import RandExp from 'randexp';
 
 // Always remember Internal represention is not same as JSON preview
 // Here I send clean JSON to backend and internal representation is only for UI
@@ -44,6 +45,7 @@ const gen_map: Record<string, (options?: any) => any> = {
 
     // --- Commerce ---
     price: (opts) => faker.commerce.price({ min: opts?.min || 10, max: opts?.max || 1000 }),
+    colour: () => faker.color.human(),
     currency: () => faker.finance.currencyName(),
     currency_code: () => faker.finance.currencyCode(),
     currency_symbol: () => faker.finance.currencySymbol(),
@@ -136,7 +138,9 @@ function generate_object(schema: any): any
             else { // primitives but when constraints are given looks like object
                 if(fieldDefinition.regex) {
                     try {
-                        output[key] = faker.helpers.fromRegExp(fieldDefinition.regex);
+                        const generator = new RandExp(fieldDefinition.regex); // Using RandExp to generate string from regex
+                        generator.max = 10;
+                        output[key] = generator.gen();
                     } catch(e) {
                         output[key] = "Error: Invalid Regex";
                     }

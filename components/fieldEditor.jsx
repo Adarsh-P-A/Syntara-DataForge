@@ -30,7 +30,7 @@ export default function FieldEditor({onAddField, initialData=null, onCancel=null
                 'zip_code', 'street_address', 'state', 'latitude', 'longitude', 'time_zone'
             ],
             "Commerce & Finance": [
-                'price', 'currency', 'currency_code', 'currency_symbol',
+                'price', 'colour','currency', 'currency_code', 'currency_symbol',
                 'credit_card', 'iban', 'bitcoin_address', 
                 'product_name', 'product_description', 'department', 'material'
             ],
