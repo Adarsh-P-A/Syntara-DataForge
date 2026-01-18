@@ -28,13 +28,16 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# COPY EVERYTHING (Safe Mode)
-# We copy the entire app folder to avoid "missing file" errors
-COPY --from=builder --chown=nextjs:nodejs /app ./
+# Copy ONLY the optimized standalone build
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Run the optimized server directly (faster than npm start)
+
 
 USER nextjs
 
 EXPOSE 3000
 ENV PORT=3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
